@@ -16,11 +16,12 @@ function playGame() {
     }
 
     // Find out how many rounds Player wants. Validate input.
-    let numRounds = prompt('\nWelcome to "Rock, Paper, Scissors"!!'+
+    let numRounds = prompt('\nWelcome to "Rock, Paper, Scissors"!'+
                         '\n\nHow many rounds would you like to play?');
     if (numRounds === null) return;     // User pressed Cancel button
     numRounds = parseInt(numRounds);
 
+    // If they lack brain cells, gently remind them to enter a number
     while ( (numRounds == undefined) || (Number.isNaN(numRounds)) ) {
         numRounds = prompt("\nPlease enter only a number."+
                         "\n\nHow many rounds would you like to play?");
@@ -29,13 +30,15 @@ function playGame() {
     }
 
     // Play rounds
-    let updateMessage = "Good luck!\n\n";
+    let updateMessage = "Good luck!\n\n";            // Initial message. Used for play-by-play
     for (let round=0; round < numRounds; round++) {
         let playerChoice = undefined;
         do {
             playerChoice = prompt(`\n${updateMessage}` +
-                            `So far you have ${numWins} wins, ${numLosses} losses, and ${numTies} ties.`+
-                            `\n\nRound ${round+1}!`+
+                            `So far you have ${numWins} win${numWins!=1?'s':''}, `+
+                            `${numLosses} loss${numLosses!=1?'es':''}, and `+
+                            `${numTies} tie${numTies!=1?'s':''}.`+
+                            `\n\n\t\tRound ${round+1}\t\t`+
                             `\n\nChoose one of: Rock, Paper, Scissors`);
             if (playerChoice === null) {     // User pressed Cancel button so taunt them :P
                 switch (Math.floor(Math.random()*5)) {
@@ -75,10 +78,10 @@ function playGame() {
                 break;
         }
     }
-    console.log(`Final score: ${numWins} wins, ${numLosses} losses, and ${numTies} ties.`);
+    console.log(`Final score: ${numWins} win${numWins!=1?'s':''}, ${numLosses} loss${numLosses!=1?'es':''}, and ${numTies} tie${numTies!=1?'s':''}.`);
     alert(`\n${updateMessage}`+
-            `Great game!! No more rounds remain.`+
-            `\n\nFinal tally is ${numWins} wins, ${numLosses} losses, and ${numTies} ties.`+
+            `No more rounds remain. Great game!!`+
+            `\n\nFinal tally is ${numWins} win${numWins!=1?'s':''}, ${numLosses} loss${numLosses!=1?'es':''}, and ${numTies} tie${numTies!=1?'s':''}.`+
             `\n\nHave a lovely day!`);
 }
 
