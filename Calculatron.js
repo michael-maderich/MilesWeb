@@ -121,14 +121,15 @@ leftOperatorInput.addEventListener("keyup", event => {
         animateClearButtonUpClick();
         clearButton.click();
     }
-    // If user presses +-*/ while in left field, select that operator and set focus to right field
+    // If user presses +-*/ while in left field and it's not empty, select that operator and set focus to right field
     for (let i=0; i<radios.length; i++) {
         let r = radios[i];
-        if(event.key === r.value) {
-            r.focus();
-            r.click();
+        if(event.key === r.value) {     // (+-*/)
+            if (leftOperatorInput.value !== r.value) {  // Field has text other than the operator just typed
+                r.click();                              // Select that operator and
+                rightOperatorInput.focus();             // Move focus to right operand field
+            }                                           // If left field is empty and operator typed, simply:
             leftOperatorInput.value = leftOperatorInput.value.slice(0,-1);  // Remove +-*/
-            rightOperatorInput.focus();
         }
     }
     justCleared = false;
