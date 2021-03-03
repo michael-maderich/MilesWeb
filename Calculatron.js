@@ -11,13 +11,13 @@ you don't even see the downclick. The button just stays gray. I'm stumped on thi
 */
 
 let operator = '+';
-let leftOperatorInput = document.getElementById("leftoperand");
-let rightOperatorInput = document.getElementById("rightoperand");
-let radios = document.querySelectorAll('input[name="operators"]');
-let equalsButton = document.getElementById("equals");
-let clearButton = document.getElementById("clear");
-let justCleared = false;    // Pressing Enter on Clear button triggers left field
-let answerField = document.getElementById("answer");
+const leftOperatorInput = document.getElementById("leftoperand");
+const rightOperatorInput = document.getElementById("rightoperand");
+const radios = document.querySelectorAll('input[name="operators"]');
+const equalsButton = document.getElementById("equals");
+const clearButton = document.getElementById("clear");
+const justCleared = false;    // Pressing Enter on Clear button triggers left field
+const answerField = document.getElementById("answer");
 
 
 // Make the label bold for the currently selected operator radio button and set operator
