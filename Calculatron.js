@@ -10,7 +10,7 @@ you don't even see the downclick. The button just stays gray. I'm stumped on thi
 3) Something is still wrong with the justCleared flag. 
 */
 
-let operator = '+';
+// Assign relevant HTML elements to constants
 const leftOperatorInput = document.getElementById("leftoperand");
 const rightOperatorInput = document.getElementById("rightoperand");
 const radios = document.querySelectorAll('input[name="operators"]');
@@ -37,6 +37,11 @@ function radioClicked() {
 function calculate() {      // Triggered when '=' button/Enter key is pressed
     // Get the input fields
     let leftOperand = parseFloat(leftOperatorInput.value);
+    let operator = '+';
+    for (let i=0; i<radios.length; i++) {
+        let r = radios[i];
+        if (r.checked) operator = r.value;         // Set operation to be performed
+    }
     let rightOperand = parseFloat(rightOperatorInput.value);
     let result = 0;
     let preposition;
@@ -146,12 +151,8 @@ rightOperatorInput.addEventListener("keyup", event => {
         clearButton.click();
     }
     // If user presses +-*/ while in right field, delete that keystroke
-    for (let i=0; i<radios.length; i++) {
-        let r = radios[i];
-        if(event.key === r.value) {
-            rightOperatorInput.value = rightOperatorInput.value.slice(0,-1);
-        }
-    }
+    if(event.key === '+' || event.key === '-' || event.key === '*' || event.key === '/')
+         rightOperatorInput.value = rightOperatorInput.value.slice(0,-1);
 });
 
 // While focused on radio buttons, Enter calculates, Escape clears, and +-*/ selects that operator
