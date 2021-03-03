@@ -1,14 +1,47 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Calulatron</title>
+        <title>Calculatron</title>
         <link rel="stylesheet" type="text/css" href="Calculatron.css">
-        <script src="Calculatron.js"></script>
+        <link href='https://fonts.googleapis.com/css?family=Aldrich' rel='stylesheet'>
+        <script src="Calculatron.js" async></script>
     </head>
     <body>
         <header>
 
         </header>
+        <div id="center">
+            <div id="calculator">
+                <h1>CALCULATRON</h1>
+                <div id="expression">
+                    <input id="leftoperand" type="text" autofocus="on">
+                    <div id="operator">
+                        <div><label for="add" class="boldradio">    <!--Checked by default so bold-->
+                            <input type="radio" name="operators" id="add" value="+" onclick="radioClicked()" checked>+
+                        </label></div>
+                        <div><label for="subtract">
+                            <input type="radio" name="operators" id="subtract" value="-" onclick="radioClicked()">-
+                        </label></div>
+                        <div><label for="multiply">
+                            <input type="radio" name="operators" id="multiply" value="*" onclick="radioClicked()">*
+                        </label></div>
+                        <div><label for="divide">
+                            <input type="radio" name="operators" id="divide" value="/" onclick="radioClicked()">/
+                        </label></div>
+                    </div>
+                    <input id="rightoperand" type="text">
+                </div>
+                <div id = "calcbottom">
+                    <div id="buttons">
+                        <button id="equals" class="equalsInactive" onclick="calculate()">=</button>
+                        <button id="clear" onclick="clearCalc()">C</button>
+                    </div>
+                    <div id="answer">
+                        <p><br></p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <footer>
 
         </footer>
