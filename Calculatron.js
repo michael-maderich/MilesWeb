@@ -4,10 +4,11 @@ if more than one key is pressed at a time, so the slice() method that removes th
 always perform correctly. This can be fixed by maybe stripping all bad characters from the field instead.
 I prefer this current implementation to simply clearing the entire field, though.
 2) Pressing Enter on the Clear button doesn't trigger the button click animations correctly. It seems
-that upclick isn't registering because it's being interfered by the natural action of pressing Enter
-on a button. I tried adding the unclick animation to the clearCalc() method, but now it's so fast that
-you don't even see the downclick. The button just stays gray. I'm stumped on this one.
-3) Something is still wrong with the justCleared flag. 
+that the Clear 'Enter' keyup isn't registering because it's being interfered by the natural action of
+pressing Enter on a button. EDIT: FIXED by adding the Clear button upclick animation to the
+leftOperatorInput's 'Enter' keyup action. Indeed pressing 'Enter' on the Clear button bypasses its
+'Enter' upclick completely. Instead, clearCalc() is called by the forced, unwanted button Click and
+focus transfers to the LeftOperatorInput field before the keyup
 */
 
 // Assign relevant HTML elements to constants
@@ -16,21 +17,19 @@ const rightOperatorInput = document.getElementById("rightoperand");
 const radios = document.querySelectorAll('input[name="operators"]');
 const equalsButton = document.getElementById("equals");
 const clearButton = document.getElementById("clear");
-const justCleared = false;    // Pressing Enter on Clear button triggers left field
 const answerField = document.getElementById("answer");
+let justCleared = false;    // Pressing Enter on Clear button triggers left field
 
 
 // Make the label bold for the currently selected operator radio button and set operator
 function radioClicked() {
-    for (let i=0; i<radios.length; i++) {
-        let r = radios[i];
+    radios.forEach(r => {
         let label = r.parentNode;               // Label surrounding current button
         if (label.classList.contains("boldradio")) label.classList.remove("boldradio"); // clear all bold
         if (r.checked) {
             label.classList.add("boldradio");   // Bold label of current radio button
-            operator = r.value;         // Set operation to be performed
         }
-    }
+    });
     answerField.innerHTML = `<p><br></p>`;    // Clear result when operator changed
 }
 
@@ -44,7 +43,7 @@ function calculate() {      // Triggered when '=' button/Enter key is pressed
     }
     let rightOperand = parseFloat(rightOperatorInput.value);
     let result = 0;
-    let preposition;
+    let preposition;        // For forming the correct "result sentence"
     let resultString = `The result of ${document.querySelector("input[name='operators']:checked").id}`;
     switch (operator) {
         case '+':
@@ -69,7 +68,7 @@ function calculate() {      // Triggered when '=' button/Enter key is pressed
             break;
         default:break;
     }
-    // "The result of add/subtract/dividing x and/from/by y is z. For subtract, reverse operands ("subtracting y from x")
+    // "The result of add/multipy/dividing x and/by y is z. For subtract, reverse operands ("subtracting y from x")
     resultString += `ing ${operator==='-'?rightOperand:leftOperand} ${preposition} `
                     + `${operator==='-'?leftOperand:rightOperand} is ${result}.`;
     if (result===null) resultString = "Division by 0 is fake news. Please try again.";
@@ -82,14 +81,12 @@ function calculate() {      // Triggered when '=' button/Enter key is pressed
 }
 
 function clearCalc() {
-    if (clearButton.classList.contains("clearActive")) clearButton.classList.remove("clearActive");
-    clearButton.classList.add("clearInactive");
     leftOperatorInput.value = null;
     rightOperatorInput.value = null;
     document.getElementById("add").click();
     answerField.innerHTML = `<p><br></p>`;
-    justCleared = true;         // If Clear button has focus and Enter is pressed,
-    leftOperatorInput.focus();  // leftOperatorInput.focus() will catch 'Enter' keyup and try to calculate. Bad.
+    leftOperatorInput.focus();
+    // leftOperatorInput.focus() unwantedly will catch 'Enter' keyup on Clear button and try to calculate. Fixed with justCleared flag
 }
 
 
@@ -110,12 +107,13 @@ leftOperatorInput.addEventListener("keydown", event => {
     if(event.key === 'Escape') animateClearButtonDownClick();
 });
 leftOperatorInput.addEventListener("keyup", event => {
+    animateClearButtonUpClick();    // Clear upclick isn't performed when Enter pressed on Clear button
     if(badChars.includes(event.key)) {
         leftOperatorInput.value = leftOperatorInput.value.slice(0,-1);  // Remove badchar //null;
     }
-    if(event.key === 'Enter') {
+    if(event.key === 'Enter' && justCleared === false) {    // So don't receive 'Invalid input' message after clearing
         animateEqualsButtonUpClick();
-        if (justCleared === false) equalsButton.click();    // So don't receive 'Invalid input' message after clearing
+        equalsButton.click();
     }
     if(event.key === 'Escape') {
         animateClearButtonUpClick();
@@ -132,7 +130,7 @@ leftOperatorInput.addEventListener("keyup", event => {
             leftOperatorInput.value = leftOperatorInput.value.slice(0,-1);  // Remove +-*/
         }
     }
-    justCleared = false;
+    justCleared = false;    // Reset after clicking 'Enter' on Clear button unwantedly triggers leftOperatorInput 'Enter' keyup
 });
 
 rightOperatorInput.addEventListener("keydown", event => {
@@ -193,16 +191,22 @@ equalsButton.addEventListener("keyup", event => {
     }
 });
 
-clearButton.addEventListener("keydown", event => {
-    if(event.key === 'Enter' || event.key === 'Escape') animateClearButtonDownClick();
-});
-clearButton.addEventListener("keyup", event => {
+clearButton.addEventListener("keydown", event => { // Pressing Enter on Clear button performs keydown but not keyup
     if(event.key === 'Enter') {
         justCleared = true;
-        animateClearButtonUpClick();    // Why doesn't this work?
+        animateClearButtonDownClick();
     }
     if(event.key === 'Escape') {
-        justCleared = true;
+        animateClearButtonDownClick();
+    }
+});
+clearButton.addEventListener("keyup", event => {
+    // Never triggers. Clear button naturally clicked on 'Enter' keydown and focus moves to leftOperatorInput for 'Enter' keyup
+    if(event.key === 'Enter') {
+//        justCleared = true;
+        animateClearButtonUpClick();    // Why doesn't this work? And that ^^ is why this doesn't work
+    }
+    if(event.key === 'Escape') {
         animateClearButtonUpClick();
         clearButton.click();
     }
