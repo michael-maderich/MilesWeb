@@ -16,14 +16,12 @@ const answerField = document.getElementById("answer");
 let justCleared = false;    // Pressing Enter on Clear button triggers left field
 
 
-// Make the label bold for the currently selected operator radio button and set operator
+// Make the label bold for the currently selected operator radio button. Triggered by HTML when radio changed.
 function radioClicked() {
     radios.forEach(r => {
         let label = r.parentNode;               // Label surrounding current button
         if (label.classList.contains("boldradio")) label.classList.remove("boldradio"); // clear all bold
-        if (r.checked) {
-            label.classList.add("boldradio");   // Bold label of current radio button
-        }
+        if (r.checked) label.classList.add("boldradio");   // Bold label of current radio button
     });
     answerField.innerHTML = `<p><br></p>`;    // Clear result when operator changed
 }
@@ -31,15 +29,12 @@ function radioClicked() {
 function calculate() {      // Triggered when '=' button/Enter key is pressed
     // Get the input fields
     let leftOperand = parseFloat(leftOperatorInput.value);
-    let operator = '+';
-    for (let i=0; i<radios.length; i++) {
-        let r = radios[i];
-        if (r.checked) operator = r.value;         // Set operation to be performed
-    }
     let rightOperand = parseFloat(rightOperatorInput.value);
+    let operator;   radios.forEach(r => { if (r.checked) operator = r.value;  });  // Set operation to be performed
     let result = 0;
     let preposition;        // For forming the correct "result sentence"
     let resultString = `The result of ${document.querySelector("input[name='operators']:checked").id}`;
+
     switch (operator) {
         case '+':
             result = leftOperand + rightOperand;
@@ -63,6 +58,7 @@ function calculate() {      // Triggered when '=' button/Enter key is pressed
             break;
         default:break;
     }
+    
     // "The result of add/multipy/dividing x and/by y is z. For subtract, reverse operands ("subtracting y from x")
     resultString += `ing ${operator==='-'?rightOperand:leftOperand} ${preposition} `
                     + `${operator==='-'?leftOperand:rightOperand} is ${result}.`;
@@ -72,6 +68,7 @@ function calculate() {      // Triggered when '=' button/Enter key is pressed
     }
     if (leftOperand === Infinity || rightOperand === Infinity || result === Infinity)
         resultString = "I'm sorry, but you have exceeded the bounds of allowable numbers. Even computers have limits."
+
     answerField.innerHTML = `<p>${resultString}</p>`;
 }
 
@@ -115,16 +112,15 @@ leftOperatorInput.addEventListener("keyup", event => {
         clearButton.click();
     }
     // If user presses +-*/ while in left field and it's not empty, select that operator and set focus to right field
-    for (let i=0; i<radios.length; i++) {
-        let r = radios[i];
+    radios.forEach(r => {
         if(event.key === r.value) {     // (+-*/)
-            if (leftOperatorInput.value !== r.value) {  // Field has text other than the operator just typed
+            if (leftOperatorInput.value !== r.value) {  // If field has text other than the operator just typed
                 r.click();                              // Select that operator and
                 rightOperatorInput.focus();             // Move focus to right operand field
             }                                           // If left field is empty and operator typed, simply:
             leftOperatorInput.value = leftOperatorInput.value.slice(0,-1);  // Remove +-*/
         }
-    }
+    });
     justCleared = false;    // Reset after clicking 'Enter' on Clear button unwantedly triggers leftOperatorInput 'Enter' keyup
 });
 
@@ -206,6 +202,7 @@ clearButton.addEventListener("keyup", event => {
         clearButton.click();
     }
 });
+
 
 function animateEqualsButtonDownClick() {
     if (equalsButton.classList.contains("equalsInactive")) equalsButton.classList.remove("equalsInactive");
