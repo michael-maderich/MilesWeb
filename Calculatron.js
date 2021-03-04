@@ -1,15 +1,10 @@
-/* NOTES:
-1) Key listeners for removing letters from inputs aren't the best because they can get crossed
-if more than one key is pressed at a time, so the slice() method that removes that character doesn't
-always perform correctly. This can be fixed by maybe stripping all bad characters from the field instead.
-I prefer this current implementation to simply clearing the entire field, though.
-2) Pressing Enter on the Clear button doesn't trigger the button click animations correctly. It seems
-that the Clear 'Enter' keyup isn't registering because it's being interfered by the natural action of
-pressing Enter on a button. EDIT: FIXED by adding the Clear button upclick animation to the
-leftOperatorInput's 'Enter' keyup action. Indeed pressing 'Enter' on the Clear button bypasses its
-'Enter' upclick completely. Instead, clearCalc() is called by the forced, unwanted button Click and
-focus transfers to the LeftOperatorInput field before the keyup
-*/
+/********************************************************************************
+* CALCULATRON
+* by: Michael Maderich
+* March 3, 2021
+*
+* Simple arithmetic calculator with HTML interface and Javascript implementation
+********************************************************************************/
 
 // Assign relevant HTML elements to constants
 const leftOperatorInput = document.getElementById("leftoperand");
@@ -228,3 +223,19 @@ function animateClearButtonUpClick() {
     if (clearButton.classList.contains("clearActive")) clearButton.classList.remove("clearActive");
     clearButton.classList.add("clearInactive");
 }
+
+/* NOTES on the key listeners:
+1) Key listeners for removing letters from inputs aren't the best because they can get crossed
+if more than one key is pressed at a time, so the slice() method that removes that character doesn't
+always perform correctly. This can be fixed by maybe stripping all bad characters from the field instead.
+I prefer this current implementation to simply clearing the entire field, though.
+2) Pressing Enter on the Clear button doesn't trigger the button click animations correctly. It seems
+that the Clear 'Enter' keyup isn't registering because it's being interfered by the natural action of
+pressing Enter on a button. EDIT: FIXED by adding the Clear button upclick animation to the
+leftOperatorInput's 'Enter' keyup action. Indeed pressing 'Enter' on the Clear button bypasses its
+'Enter' upclick completely. Instead, clearCalc() is called by the forced, unwanted button Click and
+focus transfers to the LeftOperatorInput field before the keyup
+3) The key listeners allowed me to do a number of fun things, though, like allowing the operator to
+be changed by typing it while in the left field, or while focused on the operator radio buttons. Also,
+pressing Enter or Escape anywhere on the Calculatron triggers the Equals and Clear buttons, respectively.
+*/
